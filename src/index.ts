@@ -70,18 +70,19 @@ export default {
       schema,
       context: { env },
       // 配置 CORS - 允许所有来源访问
-      cors: (request) => {
-        const requestOrigin = request.headers.get('origin');
-        return {
-          origin: requestOrigin || '*',
-          credentials: false,
-          allowedHeaders: ['Content-Type', 'Authorization'],
-          methods: ['POST', 'GET', 'OPTIONS'],
-        };
+      cors: {
+        origin: '*',
+        credentials: false,
+        allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+        methods: ['POST', 'GET', 'OPTIONS'],
       },
       // 启用 GraphiQL 界面 (开发环境)
       graphiql: true,
       landingPage: false,
+      fetchAPI: {
+        Request,
+        Response,
+      },
     });
 
     return yoga.fetch(request, env, ctx);
