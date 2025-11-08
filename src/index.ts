@@ -93,7 +93,7 @@ export default {
       cors: {
         origin: [
           "http://localhost:5173",
-          "https://ai-chatbot.autonomic633.pages.dev",
+          "https://xfz-chatbot-frontend.pages.dev",
         ],
         credentials: true,
         allowedHeaders: ["Content-Type", "Authorization", "Accept"],
