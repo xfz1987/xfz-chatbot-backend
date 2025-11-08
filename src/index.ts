@@ -94,7 +94,6 @@ export default {
         origin: [
           "http://localhost:5173",
           "https://xfz-chatbot-frontend.pages.dev",
-          "api.yideng.shop",
         ],
         credentials: true,
         allowedHeaders: ["Content-Type", "Authorization", "Accept"],

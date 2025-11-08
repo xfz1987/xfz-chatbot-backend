@@ -4,7 +4,7 @@ compatibility_date = "2024-01-01"
 
 # 环境变量配置
 [vars]
-ALLOWED_ORIGINS = "http://localhost:5173,https://xfz-chatbot-frontend.pages.dev,https://api.yideng.shop"
+ALLOWED_ORIGINS = "http://localhost:5173,https://xfz-chatbot-frontend.pages.dev"
 # OPENAI_API_KEY 将通过 wrangler secret 设置
 
 # KV 命名空间 (如果需要的话)
@@ -16,3 +16,8 @@ ALLOWED_ORIGINS = "http://localhost:5173,https://xfz-chatbot-frontend.pages.dev,
 # [[durable_objects.bindings]]
 # name = "CHAT_SESSION"
 # class_name = "ChatSession"
+
+# 添加自定义域名路由
+routes = [
+  { pattern = "api.yideng.shop/*", zone_name = "yideng.shop" }
+]
