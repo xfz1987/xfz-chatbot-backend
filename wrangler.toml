@@ -1,4 +1,4 @@
-name = "xfz-chatbot-backend"
+name = "xfz-chatbot-serverless"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
 

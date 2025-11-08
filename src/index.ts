@@ -32,9 +32,9 @@ const schema = createSchema({
         });
 
         try {
-          // 调用 OpenAI API
+          // 调用 OpenAI API (使用 gpt-4o-mini - 最便宜的模型)
           const completion = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
+            model: 'gpt-4o-mini',
             messages: [
               {
                 role: 'user',
