@@ -4,6 +4,7 @@ compatibility_date = "2024-01-01"
 
 # 环境变量配置
 [vars]
+# []
 # OPENAI_API_KEY 将通过 wrangler secret 设置
 
 # KV 命名空间 (如果需要的话)
