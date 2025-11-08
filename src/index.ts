@@ -69,11 +69,15 @@ export default {
     const yoga = createYoga({
       schema,
       context: { env },
-      // 配置 CORS
-      cors: {
-        origin: '*', // 生产环境请配置为具体的前端域名
-        credentials: true,
-        methods: ['POST', 'GET', 'OPTIONS'],
+      // 配置 CORS - 允许所有来源访问
+      cors: (request) => {
+        const requestOrigin = request.headers.get('origin');
+        return {
+          origin: requestOrigin || '*',
+          credentials: false,
+          allowedHeaders: ['Content-Type', 'Authorization'],
+          methods: ['POST', 'GET', 'OPTIONS'],
+        };
       },
       // 启用 GraphiQL 界面 (开发环境)
       graphiql: true,
