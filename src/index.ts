@@ -1,5 +1,5 @@
-import { createYoga, createSchema } from 'graphql-yoga';
-import OpenAI from 'openai';
+import { createYoga, createSchema } from "graphql-yoga";
+import OpenAI from "openai";
 
 // GraphQL Schema 定义
 const schema = createSchema({
@@ -19,10 +19,14 @@ const schema = createSchema({
   `,
   resolvers: {
     Query: {
-      hello: () => 'Hello from Cloudflare Workers!',
+      hello: () => "Hello from Cloudflare Workers!",
     },
     Mutation: {
-      chat: async (_parent, args: { message: string }, context: { env: Env }) => {
+      chat: async (
+        _parent,
+        args: { message: string },
+        context: { env: Env }
+      ) => {
         const { message } = args;
         const { env } = context;
 
@@ -32,26 +36,38 @@ const schema = createSchema({
         });
 
         try {
+          console.log("Calling OpenAI API...");
           // 调用 OpenAI API (使用 gpt-4o-mini - 最便宜的模型)
           const completion = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            model: "gpt-4o-mini",
             messages: [
               {
-                role: 'user',
+                role: "user",
                 content: message,
               },
             ],
           });
 
-          const responseMessage = completion.choices[0]?.message?.content || 'No response';
+          const responseMessage =
+            completion.choices[0]?.message?.content || "No response";
+          console.log("OpenAI response:", responseMessage);
 
           return {
             message: responseMessage,
             timestamp: new Date().toISOString(),
           };
-        } catch (error) {
-          console.error('OpenAI API Error:', error);
-          throw new Error('Failed to get response from AI');
+        } catch (error: any) {
+          console.error("OpenAI API Error:", error);
+          console.error("Error details:", {
+            message: error.message,
+            status: error.status,
+            type: error.type,
+          });
+          throw new Error(
+            `Failed to get response from AI: ${
+              error.message || "Unknown error"
+            }`
+          );
         }
       },
     },
@@ -64,17 +80,24 @@ export interface Env {
 }
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(
+    request: Request,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<Response> {
     // 创建 GraphQL Yoga 实例
     const yoga = createYoga({
       schema,
       context: { env },
       // 配置 CORS - 允许所有来源访问
       cors: {
-        origin: '*',
-        credentials: false,
-        allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-        methods: ['POST', 'GET', 'OPTIONS'],
+        origin: [
+          "http://localhost:5173",
+          "https://ai-chatbot.autonomic633.pages.dev",
+        ],
+        credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+        methods: ["POST", "GET", "OPTIONS"],
       },
       // 启用 GraphiQL 界面 (开发环境)
       graphiql: true,
