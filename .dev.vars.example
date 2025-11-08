@@ -1,0 +1,4 @@
+# 开发环境变量配置示例
+# 将此文件复制为 .dev.vars 并填入实际的 API Key
+
+OPENAI_API_KEY=your_openai_api_key_here

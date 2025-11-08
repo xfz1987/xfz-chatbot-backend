@@ -1,0 +1,17 @@
+name = "xfz-chatbot-backend"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# 环境变量配置
+[vars]
+# OPENAI_API_KEY 将通过 wrangler secret 设置
+
+# KV 命名空间 (如果需要的话)
+# [[kv_namespaces]]
+# binding = "CHAT_HISTORY"
+# id = "your-kv-id"
+
+# 如果需要 Durable Objects
+# [[durable_objects.bindings]]
+# name = "CHAT_SESSION"
+# class_name = "ChatSession"

@@ -1,0 +1,85 @@
+import { createYoga, createSchema } from 'graphql-yoga';
+import OpenAI from 'openai';
+
+// GraphQL Schema 定义
+const schema = createSchema({
+  typeDefs: /* GraphQL */ `
+    type Query {
+      hello: String!
+    }
+
+    type Mutation {
+      chat(message: String!): ChatResponse!
+    }
+
+    type ChatResponse {
+      message: String!
+      timestamp: String!
+    }
+  `,
+  resolvers: {
+    Query: {
+      hello: () => 'Hello from Cloudflare Workers!',
+    },
+    Mutation: {
+      chat: async (_parent, args: { message: string }, context: { env: Env }) => {
+        const { message } = args;
+        const { env } = context;
+
+        // 初始化 OpenAI 客户端
+        const openai = new OpenAI({
+          apiKey: env.OPENAI_API_KEY,
+        });
+
+        try {
+          // 调用 OpenAI API
+          const completion = await openai.chat.completions.create({
+            model: 'gpt-3.5-turbo',
+            messages: [
+              {
+                role: 'user',
+                content: message,
+              },
+            ],
+          });
+
+          const responseMessage = completion.choices[0]?.message?.content || 'No response';
+
+          return {
+            message: responseMessage,
+            timestamp: new Date().toISOString(),
+          };
+        } catch (error) {
+          console.error('OpenAI API Error:', error);
+          throw new Error('Failed to get response from AI');
+        }
+      },
+    },
+  },
+});
+
+// Cloudflare Workers 环境变量类型
+export interface Env {
+  OPENAI_API_KEY: string;
+}
+
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    // 创建 GraphQL Yoga 实例
+    const yoga = createYoga({
+      schema,
+      context: { env },
+      // 配置 CORS
+      cors: {
+        origin: '*', // 生产环境请配置为具体的前端域名
+        credentials: true,
+        methods: ['POST', 'GET', 'OPTIONS'],
+      },
+      // 启用 GraphiQL 界面 (开发环境)
+      graphiql: true,
+      landingPage: false,
+    });
+
+    return yoga.fetch(request, env, ctx);
+  },
+};
